@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="canvas.js"></script>
+    <script src="functionparser.js"></script>
+    <script src="localstorage.js"></script>
+    <script src="inputmanager.js"></script>
+    <script src="scriptcompiler.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <title>Tangra</title>
+</head>
+<body onload="setupcanvas()" onkeydown="processKey(event)">
+    <div style="display:flex;">
+    <div class="tall" style="width:400px">
+        <div class="wrapper">
+            <div style="display:flex;">
+                <div style="position:relative; left: 110px;">
+                <img src="logo.png" width="60px"> 
+                </div>
+                <div style="position:relative; left: 120px" class="truecenter">
+                    <b>Tangra</b>
+                </div>
+            </div>
+            <hr>
+            <div class="center">
+                <p><b>General settings</b></p>
+                <span>Zoom: </span> <input type="range" style="width:320px" min="-10" max="10" step="1" id="gridsize" onchange="update('gridsize',1)"> <br>
+                <span>Center X: </span> <input type="number" step="any" id="deltax" onchange="update('deltax',1)"> <br>
+                <span>Center Y: </span> <input type="number" step="any" id="deltay" onchange="update('deltay',1)"> <br>
+                <span>Display center </span><input id="showcenter" type="checkbox" onchange="update('showcenter',1)"> 
+                <span>Display grid </span><input id="showgrid" type="checkbox" onchange="update('showgrid',1)"> <br>
+                <span>Display X-Axis </span><input id="showxaxis" type="checkbox" onchange="update('showxaxis',1)">
+                <span>Display Y-Axis </span><input id="showyaxis" type="checkbox" onchange="update('showyaxis',1)">
+            </div>
+            <hr>
+            <div class="center">
+                <p><b>Grid script<sup><span id="helpbutton" onmouseover="showHelp()" onmouseleave="hideHelp()" onclick="lockHelp()">?</span></sup></b></p>
+            </div>
+            <textarea cols="46" rows="28" id="gridscript"></textarea>
+            <div style="display:flex; justify-content: center; margin-top:3px">
+                <button onclick="update('gridscript',1)" style="color:darkgreen;">Compile script</button>
+                <button onclick="confirmgridreset()" style="color:red;">Clear canvas</button>
+            </div>
+            <span id="msg">error message</span>
+        </div>
+    </div>
+    <div class="wrapper tall" style="margin-left:5px">
+    <canvas id="output" height="750" width="1010" onclick="createPoint(event)"></canvas>
+    <div id="help">
+        <h1 class="center">Documentation</h1>
+        <p>Tangra currently supports the following instructions:</p>
+        <ul>
+            <li>
+                <span class="inline-code">Point &ltx&gt &lty&gt &ltOptional: color&gt ;</span> 
+                - Draws a point at coordinates <span class="inline-code">(x,y)</span> 
+                with a specified color (by default black).
+            </li>
+            
+            <li>
+                <span class="inline-code">Segment/Segm &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltOptional: color&gt ;</span> 
+                - Draws a segment between <span class="inline-code">(x1,y1)</span> and <span class="inline-code">(x2,y2)</span> 
+                with a specified color (by default black).
+            </li>
+            
+            <li>
+                <span class="inline-code">Line &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltOptional: color&gt ;</span> - 
+                Draws a line with a specified color (by default black) which contains points 
+                <span class="inline-code">(x1,y1)</span> and <span class="inline-code">(x2,y2)</span>.
+            </li>
+            
+            <li>
+                <span class="inline-code">Triangle/Tri &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltx3&gt &lty3&gt &ltOptional: color&gt ;</span> 
+                - Draws a triangle whose vertices are at coordinates  <span class="inline-code">(x1,y1)</span>, 
+                <span class="inline-code">(x2,y2)</span> and <span class="inline-code">(x3,y3)</span> with a specified color (by default black).
+            </li>
+            
+            <li>
+                <span class="inline-code">Filltriangle/Filltri &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltx3&gt &lty3&gt &ltOptional: color&gt ;</span> - 
+                Fills a triangle whose vertices are at coordinates  <span class="inline-code">(x1,y1)</span>, 
+                <span class="inline-code">(x2,y2)</span> and <span class="inline-code">(x3,y3)</span> with a specified color (by default black).
+            </li>
+            
+            <li>
+                <span class="inline-code">Circle &ltx&gt &lty&gt &ltr&gt &ltOptional: color&gt ;</span> 
+                - Draws a circle centered in <span class="inline-code">(x1,y1)</span> with a radius of <span class="inline-code">r</span> 
+                with a specified color (by default black).
+            </li>
+            
+            <li>
+                <span class="inline-code">Disk &ltx&gt &lty&gt &ltr&gt &ltOptional: color&gt ;</span> 
+                - Draws a disk centered in <span class="inline-code">(x1,y1)</span> with a radius of <span class="inline-code">r</span> 
+                with a specified color (by default black).
+            </li>
+
+            <li>
+                <span class="inline-code">Rectangle/Rect &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltOptional: color&gt ;</span> 
+                - Draws a rectangle between <span class="inline-code">(x1,y1)</span> and <span class="inline-code">(x2,y2)</span> 
+                with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Fillrect/Fillr &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt &ltOptional: color&gt ;</span> 
+                - Fills a rectangle between <span class="inline-code">(x1,y1)</span> and <span class="inline-code">(x2,y2)</span> 
+                with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Square/Sqr &ltx1&gt &lty1&gt &ltl&gt &ltOptional: color&gt ;</span> 
+                - Draws a square between <span class="inline-code">(x,y)</span> and <span class="inline-code">(x+l,y+l)</span> 
+                with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Fillsquare/Fillsqr &ltx1&gt &lty1&gt &ltl&gt &ltOptional: color&gt ;</span> 
+                - Fills a square between <span class="inline-code">(x,y)</span> and <span class="inline-code">(x+l,y+l)</span> 
+                with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Polygon/Poly &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt ... &ltxn&gt &ltyn&gt &ltOptional: color&gt ;</span> 
+                - Draws a polygon whose vertices are at coordinates  <span class="inline-code">(x1,y1)</span>, <span class="inline-code">(x2,y2)</span> 
+                ... <span class="inline-code">(xn,yn)</span>  with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Fillpoly/Polyfill &ltx1&gt &lty1&gt &ltx2&gt &lty2&gt ... &ltxn&gt &ltyn&gt &ltOptional: color&gt ;</span>
+                 - Fills a polygon whose vertices are at coordinates  <span class="inline-code">(x1,y1)</span>, <span class="inline-code">(x2,y2)</span> 
+                 ... <span class="inline-code">(xn,yn)</span> with a specified color (by default black).
+            </li>
+            <li>
+                <span class="inline-code">Function/Func &ltfunction_definition&gt &ltOptional: color&gt ;</span> 
+                - Plots a function with a specified color (by default black). 
+                As of now, fuction definitions may only contain <span class="inline-code">x</span>, floating point numbers, and the following arithmetic operators: 
+                <span class="inline-code">+</span>, <span class="inline-code">-</span>, <span class="inline-code">*</span>, 
+                <span class="inline-code">/</span> and <span class="inline-code">^</span>.
+            </li>
+        </ul>
+    </div>
+    </div>
+    </div>
+</body>
+</html>

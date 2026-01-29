@@ -1,0 +1,58 @@
+
+input{
+    margin:2px;
+}
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+img{
+    margin:3px;
+}
+li{
+    padding: 3px;
+    line-height: 1.8;
+}
+.wrapper{
+    border: 1px gray solid;
+    border-radius: 3px;
+    padding: 5px;
+}
+.tall{
+    height: 750px;
+}
+.center{
+    text-align: center;
+}
+.truecenter{
+    display: flex;
+    align-items: center;
+}
+textarea {
+    resize: none;
+}
+button{
+    margin-left:5px;
+}
+#msg{
+    color:red;
+    font-size: 0.7rem;
+}
+hr{
+    border-top: 1px dotted #bbb;
+}
+#help{
+    display: none;
+    font-size: 0.8rem;
+}
+#helpbutton{
+    font-style: italic;
+    color: #777;
+}
+.inline-code{
+    background-color: #DDD;
+    color:#555;
+    font-family: monospace;
+    border: 1px #aaa solid;
+    border-radius: 2px;
+    padding: 2px;
+}
