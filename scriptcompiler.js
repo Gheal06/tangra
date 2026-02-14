@@ -48,7 +48,7 @@ function dealias(alias){
 }
 function compilescript(){
     line=1,col=0;
-    code=localStorage.getItem('gridscript')+'\n';
+    code=getItem('gridscript')+'\n';
     ptr=0;
     document.getElementById('msg').innerText='';
     while(ptr<code.length){
@@ -74,7 +74,7 @@ function compilescript(){
             return;
         }
         var min_tokens=min_expected_tokens[instruction],max_tokens=max_expected_tokens[instruction];
-        console.log(min_tokens,tokens,max_tokens);
+        //console.log(min_tokens,tokens,max_tokens);
         if(tokens.length<min_tokens){
             CPE('Not enough parameters provided for instruction "'+tokens[0]+'"');
             return;

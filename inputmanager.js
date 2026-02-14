@@ -38,6 +38,7 @@ function processKey(event){
     }
 }
 function createPoint(event){
+    return;
     var x=converttogridx(event.clientX-event.target.offsetLeft),y=converttogridy(event.clientY-event.target.offsetTop);
     x=snaptogrid(x),y=snaptogrid(y);
     console.log(x,y);

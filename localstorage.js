@@ -1,14 +1,19 @@
+var cache={};
+function getItem(id){
+    return cache[id];
+}
 function update(id, redraw=false){
     //console.log('milka');
     if(document.getElementById(id).nodeName=='INPUT' && document.getElementById(id).type=='checkbox')
-        localStorage.setItem(id,document.getElementById(id).checked);    
+        cache[id]=document.getElementById(id).checked;    
     else{
         if(document.getElementById(id).value>=1e9) 
             document.getElementById(id).value=1e9;
         else if(document.getElementById(id).value<=-1e9) 
                 document.getElementById(id).value=-1e9;
-        localStorage.setItem(id,document.getElementById(id).value);
+        cache[id]=document.getElementById(id).value;
     }
+    localStorage.setItem('tangra_data',JSON.stringify(cache));
     if(redraw) drawcanvas();
 }
 function updateAll(){
@@ -33,7 +38,7 @@ function clear(){
     document.getElementById('showyaxis').checked=1;
 
     document.getElementById('gridscript').value="";
-    localStorage.clear();
+    localStorage.removeItem('tangra_data');
     updateAll();
 }
 function confirmgridreset(){
@@ -42,12 +47,13 @@ function confirmgridreset(){
 }
 function sync(id){
     if(document.getElementById(id).nodeName=='INPUT' && document.getElementById(id).type=='checkbox'){
-        document.getElementById(id).checked=(localStorage.getItem(id)=='true');
+        document.getElementById(id).checked=cache[id];
     }
-    else document.getElementById(id).value=localStorage.getItem(id);
+    else document.getElementById(id).value=cache[id];
 }
 function syncAll(){
-    if(localStorage.length==0) clear();
+    if(localStorage.getItem('tangra_data')==null) clear();
+    cache=JSON.parse(localStorage.getItem('tangra_data'));
     sync('gridsize');
     sync('deltax');
     sync('deltay');

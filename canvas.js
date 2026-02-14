@@ -107,13 +107,14 @@ function trim(x, precision){
 function drawcanvas(){
     clearCanvas();
     //console.log('canvas');
-    var showcenter=localStorage.getItem('showcenter');
-    var showgrid=localStorage.getItem('showgrid');
-    var showxaxis=localStorage.getItem('showxaxis');
-    var showyaxis=localStorage.getItem('showyaxis');
-    midx=Number(localStorage.getItem('deltax'));
-    midy=Number(localStorage.getItem('deltay'));
-    step=Math.pow(2,localStorage.getItem('gridsize'));
+    var showcenter=getItem('showcenter');
+    var showgrid=getItem('showgrid');
+    var showxaxis=getItem('showxaxis');
+    var showyaxis=getItem('showyaxis');
+    midx=Number(getItem('deltax'));
+    midy=Number(getItem('deltay'));
+    step=Math.pow(2,getItem('gridsize'));
+    //console.log(showcenter,showgrid,showxaxis,showyaxis,midx,midy,step);
     unit=50/step;
     var font=16;
     if(step>=64) font=12;
@@ -133,23 +134,23 @@ function drawcanvas(){
     //console.log(minx,maxx,miny,maxy,step);
     //console.log(showcenter,showgrid,showxaxis,showyaxis);
     for(var x=nextmultiple(step,minx);x<=maxx;x+=step){
-        if(showxaxis=="true"){
+        if(showxaxis==true){
             //console.log(x);
             drawpoint(x,0,3,"#000000");
             drawtext(x+5/unit,-20/unit,trim(x,3).toString(),font);
         }
-        if(x==0 && showyaxis=="true") drawsegment(x,miny,x,maxy,3);
-        if(showgrid=="true") drawsegment(x,miny,x,maxy,1,"#888888");
+        if(x==0 && showyaxis==true) drawsegment(x,miny,x,maxy,3);
+        if(showgrid==true) drawsegment(x,miny,x,maxy,1,"#888888");
     }
     for(var y=nextmultiple(step,miny);y<=maxy;y+=step){
-        if(showyaxis=="true"){
+        if(showyaxis==true){
             drawpoint(0,y,3,"#000000");
             drawtext(5/unit,y-20/unit,trim(y,3).toString(),font);
         }
-        if(y==0 && showxaxis=="true") drawsegment(minx,y,maxx,y,3);
-        if(showgrid=="true") drawsegment(minx,y,maxx,y,1,"#888888");
+        if(y==0 && showxaxis==true) drawsegment(minx,y,maxx,y,3);
+        if(showgrid==true) drawsegment(minx,y,maxx,y,1,"#888888");
     }
-    if(showcenter=="true") drawpoint(midx,midy,4,"#FF0000");
+    if(showcenter==true) drawpoint(midx,midy,4,"#FF0000");
     compilescript();
 }
 function setupcanvas(){
